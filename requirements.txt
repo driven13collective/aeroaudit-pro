@@ -1,0 +1,9 @@
+streamlit
+pandas
+plotly
+fpdf2
+inference-sdk
+kaleido==0.2.1
+ultralytics
+opencv-python
+reflex==0.8.26

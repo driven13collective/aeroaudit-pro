@@ -1,0 +1,29 @@
+# Ignore environment secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Docker
+certs/
+
+# Reports
+assets/*.pdf
+assets/*_verification.json
+.states
+.web
+assets/external/
+*.py[cod]
+*.db
+__pycache__/
+# Ignore the big stuff
+node_modules/
+.venv/
+.DS_Store
+venv/
+
+# Ignore your actual video audits (They are too big for GitHub)
+*.mp4
+*.mov
+runs/
