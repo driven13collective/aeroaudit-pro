@@ -1,31 +1,40 @@
 import reflex as rx
 import os
-
-class State(rx.State):
-    """The app state for AeroAudit-Pro."""
-    is_processing: bool = False
-    video_path: str = ""
-
-    async def handle_upload(self, files: list[rx.UploadFile]):
-        """Handle the F1 video upload and trigger YOLOv8."""
-        self.is_processing = True
-        yield
-        # Save the video to the assets folder
-        for file in files:
-            upload_data = await file.read()
-            outfile = f"assets/{file.filename}"
-            with open(outfile, "wb") as f:
-                f.write(upload_data)
-            self.video_path = file.filename
-        # This is where we will call your YOLOv8 model later
-        # process_audit(self.video_path)
-        self.is_processing = False
+from .state import State
 
 def index() -> rx.Component:
-    return rx.center(
+    return rx.cond(
+        State.is_maintenance,
         rx.vstack(
             rx.heading("AeroAudit-Pro", size="9"),
-            rx.text("F1 Sponsorship Verification Engine"),
+            rx.text("🏎️ Our AI engine is currently being tuned for the next race."),
+            rx.badge("Status: Under Maintenance", color_scheme="orange"),
+            height="100vh", justify_content="center",
+        ),
+        rx.vstack(
+            rx.heading("AeroAudit-Pro Dashboard"),
+            rx.text("Welcome, Auditor. Upload your F1 footage below."),
+            # ... your actual app code here ...
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell("Time"),
+                        rx.table.column_header_cell("Brand"),
+                        rx.table.column_header_cell("Confidence"),
+                    ),
+                ),
+                rx.table.body(
+                    rx.foreach(
+                        State.audit_data,
+                        lambda item: rx.table.row(
+                            rx.table.cell(item["timestamp"]),
+                            rx.table.cell(item["brand"]),
+                            rx.table.cell(item["confidence"]),
+                        ),
+                    ),
+                ),
+                width="100%",
+            ),
             rx.upload(
                 rx.text("Drag and drop F1 footage or click to select"),
                 border="1px dashed #ccc",
@@ -36,10 +45,10 @@ def index() -> rx.Component:
                 on_click=State.handle_upload(rx.upload_files()),
                 loading=State.is_processing,
             ),
+            rx.button("Export Verification Report (PDF)", color_scheme="green"),
             align="center",
             spacing="5",
         ),
-        height="100vh",
     )
 
 app = rx.App()
