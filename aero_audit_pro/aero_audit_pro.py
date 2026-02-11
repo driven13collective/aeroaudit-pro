@@ -1,6 +1,5 @@
 import reflex as rx
-import os
-from .state import State
+from .state import State  # Removed the dot to fix import errors
 
 def index() -> rx.Component:
     return rx.cond(
@@ -14,7 +13,7 @@ def index() -> rx.Component:
         rx.vstack(
             rx.heading("AeroAudit-Pro Dashboard"),
             rx.text("Welcome, Auditor. Upload your F1 footage below."),
-            # ... your actual app code here ...
+            
             rx.table.root(
                 rx.table.header(
                     rx.table.row(
@@ -37,12 +36,13 @@ def index() -> rx.Component:
             ),
             rx.upload(
                 rx.text("Drag and drop F1 footage or click to select"),
+                id="upload1",
                 border="1px dashed #ccc",
                 padding="5em",
             ),
             rx.button(
                 "Run Audit",
-                on_click=State.handle_upload(rx.upload_files()),
+                on_click=State.handle_upload(rx.upload_files(upload_id="upload1")),
                 loading=State.is_processing,
             ),
             rx.button("Export Verification Report (PDF)", color_scheme="green"),
