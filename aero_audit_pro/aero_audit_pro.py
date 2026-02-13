@@ -11,9 +11,9 @@ def index() -> rx.Component:
             height="100vh", justify_content="center",
         ),
         rx.vstack(
-            rx.heading("AeroAudit-Pro Dashboard"),
+            rx.heading("AeroAudit Pro Auditor"),
             rx.text("Welcome, Auditor. Upload your F1 footage below."),
-            
+
             rx.table.root(
                 rx.table.header(
                     rx.table.row(
@@ -35,16 +35,22 @@ def index() -> rx.Component:
                 width="100%",
             ),
             rx.upload(
-                rx.text("Drag and drop F1 footage or click to select"),
-                id="upload1",
+                rx.vstack(
+                    rx.button("Select Aramco Video", color_scheme="blue"),
+                    rx.text("or drag and drop here"),
+                ),
+                id="upload_video",
                 border="1px dashed #ccc",
-                padding="5em",
+                padding="2em",
             ),
             rx.button(
-                "Run Audit",
-                on_click=State.handle_upload(rx.upload_files(upload_id="upload1")),
+                "Run AeroVision Audit",
+                on_click=State.handle_upload(
+                    rx.upload_files(upload_id="upload_video")
+                ),
                 loading=State.is_processing,
             ),
+            rx.text(f"File ready: {State.video_path}"),
             rx.button("Export Verification Report (PDF)", color_scheme="green"),
             align="center",
             spacing="5",
