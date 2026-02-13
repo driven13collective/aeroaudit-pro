@@ -1,60 +1,58 @@
 import reflex as rx
-from .state import State  # Removed the dot to fix import errors
+from .state import State
+
 
 def index() -> rx.Component:
-    return rx.cond(
-        State.is_maintenance,
+    return rx.center(
         rx.vstack(
-            rx.heading("AeroAudit-Pro", size="9"),
-            rx.text("🏎️ Our AI engine is currently being tuned for the next race."),
-            rx.badge("Status: Under Maintenance", color_scheme="orange"),
-            height="100vh", justify_content="center",
-        ),
-        rx.vstack(
-            rx.heading("AeroAudit Pro Auditor"),
-            rx.text("Welcome, Auditor. Upload your F1 footage below."),
+            rx.heading("AeroAudit Pro", size="9"),
+            rx.text("Industrial AI Auditor for Aramco Infrastructure"),
 
-            rx.table.root(
-                rx.table.header(
-                    rx.table.row(
-                        rx.table.column_header_cell("Time"),
-                        rx.table.column_header_cell("Brand"),
-                        rx.table.column_header_cell("Confidence"),
-                    ),
-                ),
-                rx.table.body(
-                    rx.foreach(
-                        State.audit_data,
-                        lambda item: rx.table.row(
-                            rx.table.cell(item["timestamp"]),
-                            rx.table.cell(item["brand"]),
-                            rx.table.cell(item["confidence"]),
-                        ),
-                    ),
-                ),
-                width="100%",
-            ),
+            # Upload Zone
             rx.upload(
                 rx.vstack(
-                    rx.button("Select Aramco Video", color_scheme="blue"),
-                    rx.text("or drag and drop here"),
+                    rx.button("Select Video", color_scheme="blue"),
+                    rx.text("Drag Aramco footage here"),
                 ),
                 id="upload_video",
-                border="1px dashed #ccc",
-                padding="2em",
+                border="2px dashed #333",
+                padding="3em",
             ),
+
+            # Audit Button
             rx.button(
                 "Run AeroVision Audit",
                 on_click=State.handle_upload(
                     rx.upload_files(upload_id="upload_video")
                 ),
                 loading=State.is_processing,
+                width="100%",
             ),
-            rx.text(f"File ready: {State.video_path}"),
-            rx.button("Export Verification Report (PDF)", color_scheme="green"),
-            align="center",
+
+            # Results Table
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell("Brand"),
+                        rx.table.column_header_cell("Item"),
+                        rx.table.column_header_cell("Confidence"),
+                    )
+                ),
+                rx.table.body(
+                    rx.foreach(
+                        State.audit_data,
+                        lambda x: rx.table.row(
+                            rx.table.cell(x["brand"]),
+                            rx.table.cell(x["item"]),
+                            rx.table.cell(x["confidence"]),
+                        ),
+                    )
+                ),
+                width="100%",
+            ),
             spacing="5",
         ),
+        padding_top="10%",
     )
 
 app = rx.App()
