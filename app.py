@@ -1,5 +1,36 @@
 import reflex as rx
-from .state import State
+from ultralytics import YOLO
+
+
+class State(rx.State):
+    audit_data: list[dict] = []
+    is_processing: bool = False
+
+    async def handle_upload(self, files: list[rx.UploadFile]):
+        self.is_processing = True
+        self.audit_data = []
+
+        for file in files:
+            upload_data = await file.read()
+            outfile = rx.get_upload_dir() / file.filename
+
+            with open(outfile, "wb") as f:
+                f.write(upload_data)
+
+            model = YOLO("assets/best.pt")
+            results = model(str(outfile))
+
+            for r in results:
+                for box in r.boxes:
+                    self.audit_data.append(
+                        {
+                            "brand": "Aramco",
+                            "item": model.names[int(box.cls[0])],
+                            "confidence": f"{float(box.conf[0]):.2%}",
+                        }
+                    )
+
+        self.is_processing = False
 
 
 def index():
@@ -7,29 +38,21 @@ def index():
         rx.vstack(
             rx.heading("AeroAudit Pro", size="9", color="#00a3e0"),
             rx.text("Industrial Infrastructure AI Auditor", color="gray"),
-
-            # The Upload Zone (Fixed to prevent New Tab bug)
             rx.upload(
                 rx.vstack(
-                    rx.button("Select Aramco Video", variant="soft", color_scheme="blue"),
+                    rx.button("Select Aramco Video", variant="soft"),
                     rx.text("Drag & Drop footage here"),
                 ),
                 id="upload_video",
                 border="2px dashed #333",
                 padding="4em",
-                border_radius="lg",
             ),
-
-            # The Action Button
             rx.button(
                 "Run AeroVision Audit",
                 on_click=State.handle_upload(rx.upload_files(upload_id="upload_video")),
                 loading=State.is_processing,
-                size="4",
                 width="100%",
             ),
-
-            # Results Table
             rx.table.root(
                 rx.table.header(
                     rx.table.row(

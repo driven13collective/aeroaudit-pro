@@ -1,8 +1,10 @@
 [phases.setup]
+# Railway needs these to run AI and Computer Vision
 nixPkgs = ["python311", "gcc", "libglvnd", "glib"]
 
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
 [start]
+# The standard production start for a Reflex app.py
 cmd = "reflex run --env prod"

@@ -1,6 +1,4 @@
-reflex==0.6.3
+reflex
 ultralytics
 opencv-python-headless
-torchvision
 gunicorn
-uvicorn
