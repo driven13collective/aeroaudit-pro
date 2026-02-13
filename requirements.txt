@@ -1,9 +1,6 @@
-streamlit
-pandas
-plotly
-fpdf2
-inference-sdk
-kaleido==0.2.1
+reflex==0.6.3
 ultralytics
-opencv-python
-reflex==0.8.26
+opencv-python-headless
+torchvision
+gunicorn
+uvicorn

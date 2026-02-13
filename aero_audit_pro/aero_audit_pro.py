@@ -2,30 +2,30 @@ import reflex as rx
 from .state import State
 
 
-def index() -> rx.Component:
+def index():
     return rx.center(
         rx.vstack(
-            rx.heading("AeroAudit Pro", size="9"),
-            rx.text("Industrial AI Auditor for Aramco Infrastructure"),
+            rx.heading("AeroAudit Pro", size="9", color="#00a3e0"),
+            rx.text("Industrial Infrastructure AI Auditor", color="gray"),
 
-            # Upload Zone
+            # The Upload Zone (Fixed to prevent New Tab bug)
             rx.upload(
                 rx.vstack(
-                    rx.button("Select Video", color_scheme="blue"),
-                    rx.text("Drag Aramco footage here"),
+                    rx.button("Select Aramco Video", variant="soft", color_scheme="blue"),
+                    rx.text("Drag & Drop footage here"),
                 ),
                 id="upload_video",
                 border="2px dashed #333",
-                padding="3em",
+                padding="4em",
+                border_radius="lg",
             ),
 
-            # Audit Button
+            # The Action Button
             rx.button(
                 "Run AeroVision Audit",
-                on_click=State.handle_upload(
-                    rx.upload_files(upload_id="upload_video")
-                ),
+                on_click=State.handle_upload(rx.upload_files(upload_id="upload_video")),
                 loading=State.is_processing,
+                size="4",
                 width="100%",
             ),
 
@@ -33,8 +33,8 @@ def index() -> rx.Component:
             rx.table.root(
                 rx.table.header(
                     rx.table.row(
-                        rx.table.column_header_cell("Brand"),
-                        rx.table.column_header_cell("Item"),
+                        rx.table.column_header_cell("Entity"),
+                        rx.table.column_header_cell("Detection"),
                         rx.table.column_header_cell("Confidence"),
                     )
                 ),
@@ -50,10 +50,12 @@ def index() -> rx.Component:
                 ),
                 width="100%",
             ),
-            spacing="5",
+            spacing="6",
+            width="600px",
         ),
-        padding_top="10%",
+        padding_y="5em",
     )
+
 
 app = rx.App()
 app.add_page(index)

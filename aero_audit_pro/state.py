@@ -10,39 +10,34 @@ class State(rx.State):
 
     async def handle_upload(self, files: list[rx.UploadFile]):
         self.is_processing = True
-        yield
-
-        upload_dir = rx.get_upload_dir()
-        os.makedirs(upload_dir, exist_ok=True)
+        self.audit_data = []
 
         for file in files:
             upload_data = await file.read()
-            outfile = upload_dir / file.filename
+            # Save to the specific Reflex upload directory
+            outfile = rx.get_upload_dir() / file.filename
 
-            # 1. Save File
             with open(outfile, "wb") as f:
                 f.write(upload_data)
+
             self.video_path = file.filename
 
-            # 2. Trigger AeroVision Audit (Hooked to best.pt)
-            await self.run_audit(str(outfile))
+            # Run the YOLO Model
+            await self.run_aero_audit(str(outfile))
 
         self.is_processing = False
 
-    async def run_audit(self, file_path: str):
-        # This hooks the audit pipeline into the handler
-        model_path = os.path.join("assets", "best.pt")
-        model = YOLO(model_path)
+    async def run_aero_audit(self, file_path: str):
+        # Load model from assets
+        model = YOLO("assets/best.pt")
         results = model(file_path)
 
-        # 3. Repopulate audit_data
-        self.audit_data = []
         for r in results:
             for box in r.boxes:
                 self.audit_data.append(
                     {
                         "brand": "Aramco",
-                        "confidence": f"{float(box.conf[0]):.2%}",
                         "item": model.names[int(box.cls[0])],
+                        "confidence": f"{float(box.conf[0]):.2%}",
                     }
                 )

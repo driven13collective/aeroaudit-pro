@@ -1,7 +1,0 @@
-path: C:/sponsorship_audit  # Root directory
-train: train/images         # Path to training images
-val: valid/images           # Path to validation images
-test: test/images           # Path to test images (optional)
-
-nc: 2                       # Number of classes
-names: ['Valvoline', 'Aramco'] # Class names (Must match Roboflow order)

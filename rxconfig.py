@@ -2,7 +2,6 @@ import reflex as rx
 
 config = rx.Config(
     app_name="aero_audit_pro",
-    api_url="http://localhost:8000",
-    # This line stops the warning message
-    disable_plugins=['reflex.plugins.sitemap.SitemapPlugin'],
+    # 0.0.0.0 is required for Railway to find the app
+    api_url="0.0.0.0:8000",
 )
