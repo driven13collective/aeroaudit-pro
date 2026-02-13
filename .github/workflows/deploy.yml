@@ -10,18 +10,24 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: |
           pip install reflex ultralytics opencv-python-headless
+          
       - name: Export App
         run: |
           reflex init
+          # We tell Reflex where the API will be (even if it's just a static demo for now)
           reflex export --frontend-only --no-zip
+          
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: .web/_static  # This is where Reflex puts the website files
-          branch: gh-pages      # This creates a new "website" branch for you
+          # FIXED: This is the new folder path Reflex uses
+          folder: .web/build/client 
+          branch: gh-pages
