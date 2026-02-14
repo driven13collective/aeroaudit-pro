@@ -1,10 +1,10 @@
 [phases.setup]
-# We added 'libxcb' and 'xorg.libX11' to fix the crash
-nixPkgs = ["python313", "gcc", "libglvnd", "glib", "libxcb", "xorg.libX11", "xorg.libXext"]
+nixPkgs = ["python313", "gcc"]
+# These are the specific Linux 'keys' to unlock OpenCV and YOLO
+aptPkgs = ["libgl1", "libglib2.0-0", "libxcb1", "libx11-6"]
 
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
 [start]
-# The standard production start for a Reflex app.py
 cmd = "reflex run --env prod"
