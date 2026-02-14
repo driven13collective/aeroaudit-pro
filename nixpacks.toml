@@ -1,6 +1,6 @@
 [phases.setup]
-# Railway needs these to run AI and Computer Vision
-nixPkgs = ["python311", "gcc", "libglvnd", "glib"]
+# We added 'libxcb' and 'xorg.libX11' to fix the crash
+nixPkgs = ["python313", "gcc", "libglvnd", "glib", "libxcb", "xorg.libX11", "xorg.libXext"]
 
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
