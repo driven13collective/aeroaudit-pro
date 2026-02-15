@@ -1,0 +1,19 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "nixpacksPlan": {
+      "providers": ["python"],
+      "phases": {
+        "setup": {
+          "nixPkgs": ["python311", "gcc"],
+          "aptPkgs": ["libgl1", "libglib2.0-0", "libxcb1", "libx11-6", "libxext6"]
+        }
+      }
+    }
+  },
+  "deploy": {
+    "startCommand": "reflex run --env prod",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
