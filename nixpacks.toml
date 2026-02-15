@@ -3,7 +3,7 @@ nixPkgs = ["python311", "gcc"]
 aptPkgs = ["libgl1", "libglib2.0-0", "libxcb1", "libx11-6", "libxext6"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = ["python3.11 -m pip install --upgrade pip", "python3.11 -m pip install -r requirements.txt"]
 
 [start]
 cmd = "reflex run --env prod"
