@@ -1,15 +1,40 @@
+import threading
+
 import reflex as rx
 from ultralytics import YOLO  # If this is Line 2, the error is likely the OpenCV/libxcb issue again
 import os
+
+# 1. Global placeholder for the model
+model = None
+
+
+def load_model_background() -> None:
+    """Load YOLO in a background thread so the server doesn't time out."""
+    global model
+    print("AI Engine: Starting model load...")
+    model = YOLO("assets/best.pt")
+    print("AI Engine: Ready for audits.")
+
+
+# Start the background loader
+threading.Thread(target=load_model_background, daemon=True).start()
 
 
 class State(rx.State):
     audit_data: list[dict] = []
     is_processing: bool = False
 
+    @rx.var
+    def model_status(self) -> str:
+        return "System Online" if model is not None else "AI Engine Loading..."
+
     async def handle_upload(self, files: list[rx.UploadFile]):
         self.is_processing = True
         self.audit_data = []
+
+        if model is None:
+            self.is_processing = False
+            return
 
         for file in files:
             upload_data = await file.read()
@@ -18,7 +43,6 @@ class State(rx.State):
             with open(outfile, "wb") as f:
                 f.write(upload_data)
 
-            model = YOLO("assets/best.pt")
             results = model(str(outfile))
 
             for r in results:
@@ -39,6 +63,7 @@ def index():
         rx.vstack(
             rx.heading("AeroAudit Pro", size="9", color="#00a3e0"),
             rx.text("Industrial Infrastructure AI Auditor", color="gray"),
+            rx.text(f"Status: {State.model_status}"),
             rx.upload(
                 rx.vstack(
                     rx.button("Select Aramco Video", variant="soft"),
@@ -81,5 +106,11 @@ def index():
     )
 
 
+# 2. Add a dedicated Health Check Page for Railway
+def health():
+    return rx.text("Alive")
+
+
 app = rx.App()
 app.add_page(index)
+app.add_page(health, route="/health")

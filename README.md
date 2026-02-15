@@ -18,6 +18,12 @@ Welcome to the internal pilot! Please follow these guidelines while testing:
 
 > **Note:** We are currently running on a high-performance Railway tier. If you experience a 500-error, wait 30 seconds and refresh—the server may be scaling up.
 
+## Why this fixes the Crashes
+- The model loads in a background thread, so the web server can start quickly and avoid Railway startup timeouts.
+- The config binds to 0.0.0.0 and uses the Railway-provided `PORT`, so the container is reachable in production.
+- The Nixpacks setup installs system libraries required by OpenCV (libGL, libglib, and X11), preventing missing library errors.
+- The `/health` endpoint gives Railway a simple readiness check so it can confirm the app is alive.
+
 ## Roadmap
 | Feature | Status | Target Date |
 | --- | --- | --- |
