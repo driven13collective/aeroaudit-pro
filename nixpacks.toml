@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["python313", "gcc"]
+nixPkgs = ["python311", "gcc"]
 aptPkgs = ["libgl1", "libglib2.0-0", "libxcb1", "libx11-6", "libxext6"]
 
 [phases.install]
